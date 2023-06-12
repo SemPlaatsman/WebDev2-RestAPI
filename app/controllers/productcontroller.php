@@ -38,7 +38,7 @@ class ProductController extends Controller
 
         // we might need some kind of error checking that returns a 404 if the product is not found in the DB
         if (!$product) {
-            $this->respondWithError(404, "Product not found");
+            $this->respondWithError("Product not found", 404);
             return;
         }
 
@@ -52,7 +52,7 @@ class ProductController extends Controller
             $product = $this->service->insert($product);
 
         } catch (Exception $e) {
-            $this->respondWithError(500, $e->getMessage());
+            $this->respondWithError($e->getMessage(), 500);
         }
 
         $this->respond($product);
@@ -65,7 +65,7 @@ class ProductController extends Controller
             $product = $this->service->update($product, $id);
 
         } catch (Exception $e) {
-            $this->respondWithError(500, $e->getMessage());
+            $this->respondWithError($e->getMessage(), 500);
         }
 
         $this->respond($product);
@@ -76,7 +76,7 @@ class ProductController extends Controller
         try {
             $this->service->delete($id);
         } catch (Exception $e) {
-            $this->respondWithError(500, $e->getMessage());
+            $this->respondWithError( $e->getMessage(), 500);
         }
 
         $this->respond(true);

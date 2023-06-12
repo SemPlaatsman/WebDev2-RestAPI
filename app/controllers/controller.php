@@ -11,7 +11,7 @@ class Controller
     function checkForJwt() {
          // Check for token header
          if(!isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $this->respondWithError(401, "No token provided");
+            // $this->respondWithError("No token provided", 401);
             return;
         }
 
@@ -19,10 +19,10 @@ class Controller
         $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
         // Strip the part "Bearer " from the header
         $arr = explode(" ", $authHeader);
-        $jwt = $arr[1];
+        $jwt = $arr[1] ?? NULL;
 
         // Decode JWT
-        $secret_key = "YOUR_SECRET_KEY";
+        $secret_key = "secret123";
 
         if ($jwt) {
             try {
@@ -31,28 +31,28 @@ class Controller
                 // echo $decoded->data->username;
                 return $decoded;
             } catch (Exception $e) {
-                $this->respondWithError(401, $e->getMessage());
+                $this->respondWithError("Unauthorized!", 401);
                 return;
             }
         }
     }
 
-    function respond($data)
-    {
-        $this->respondWithCode(200, $data);
-    }
-
-    function respondWithError($httpcode, $message)
-    {
-        $data = array('errorMessage' => $message);
-        $this->respondWithCode($httpcode, $data);
-    }
-
-    private function respondWithCode($httpcode, $data)
+    function respond($data, int $httpcode = NULL)
     {
         header('Content-Type: application/json; charset=utf-8');
+        if (!isset($httpcode)) {
+            $httpcode = 200;
+        }
+
         http_response_code($httpcode);
         echo json_encode($data);
+        die();
+    }
+
+    function respondWithError($message, int $httpcode)
+    {
+        $data = array('errorMessage' => $message);
+        $this->respond($data, $httpcode);
     }
 
     function createObjectFromPostedJson($className)

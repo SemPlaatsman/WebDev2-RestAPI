@@ -43,7 +43,7 @@ class CategoryController extends Controller
 
         // we might need some kind of error checking that returns a 404 if the product is not found in the DB
         if (!$category) {
-            $this->respondWithError(404, "Category not found");
+            $this->respondWithError("Category not found", 404);
             return;
         }
 
@@ -56,7 +56,7 @@ class CategoryController extends Controller
             $category = $this->createObjectFromPostedJson("Models\\Category");
             $this->service->insert($category);
         } catch (Exception $e) {
-            $this->respondWithError(500, $e->getMessage());
+            $this->respondWithError( $e->getMessage(), 500);
         }
 
         $this->respond($category);
@@ -68,7 +68,7 @@ class CategoryController extends Controller
             $category = $this->createObjectFromPostedJson("Models\\Category");
             $this->service->update($category, $id);
         } catch (Exception $e) {
-            $this->respondWithError(500, $e->getMessage());
+            $this->respondWithError($e->getMessage(), 500);
         }
 
         $this->respond($category);
@@ -79,7 +79,7 @@ class CategoryController extends Controller
         try {
             $this->service->delete($id);
         } catch (Exception $e) {
-            $this->respondWithError(500, $e->getMessage());
+            $this->respondWithError($e->getMessage(), 500);
         }
 
         $this->respond(true);

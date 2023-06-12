@@ -4,7 +4,7 @@ namespace Repositories;
 use PDO;
 use PDOException;
 
-class Repository {
+abstract class Repository {
 
     protected $connection;
 

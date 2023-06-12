@@ -13,22 +13,25 @@ $router = new \Bramus\Router\Router();
 
 $router->setNamespace('Controllers');
 
-// routes for the products endpoint
-$router->get('/products', 'ProductController@getAll');
-$router->get('/products/(\d+)', 'ProductController@getOne');
-$router->post('/products', 'ProductController@create');
-$router->put('/products/(\d+)', 'ProductController@update');
-$router->delete('/products/(\d+)', 'ProductController@delete');
+// routes for the appointments endpoint
+$router->get('/appointments', 'AppointmentController@getAll');
+$router->get('/appointments/(.*)', 'AppointmentController@getOne');
+$router->post('/appointments', 'AppointmentController@create');
+$router->put('/appointments/(.*)', 'AppointmentController@update');
+$router->delete('/appointments/(.*)', 'AppointmentController@delete');
 
-// routes for the categories endpoint
-$router->get('/categories', 'CategoryController@getAll');
-$router->get('/categories/(\d+)', 'CategoryController@getOne');
-$router->post('/categories', 'CategoryController@create');
-$router->put('/categories/(\d+)', 'CategoryController@update');
-$router->delete('/categories/(\d+)', 'CategoryController@delete');
+// routes for the cats endpoint
+$router->get('/cats', 'CatController@getAll');
+$router->get('/cats/(\d+)', 'CatController@getOne');
+$router->post('/cats', 'CatController@create');
+$router->put('/cats/(\d+)', 'CatController@update');
+$router->delete('/cats/(\d+)', 'CatController@delete');
 
 // routes for the users endpoint
+$router->get('/users', 'UserController@getAll');
+$router->get('/users/(\d+)', 'UserController@getOne');
 $router->post('/users/login', 'UserController@login');
+$router->post('/users/register', 'UserController@register');
 
 // Run it!
 $router->run();
