@@ -32,6 +32,8 @@ $router->get('/users', 'UserController@getAll');
 $router->get('/users/(\d+)', 'UserController@getOne');
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/register', 'UserController@register');
+$router->put('/users/(\d+)', 'UserController@update');
+$router->delete('/users/(\d+)', 'UserController@delete');
 
 // Run it!
 $router->run();
