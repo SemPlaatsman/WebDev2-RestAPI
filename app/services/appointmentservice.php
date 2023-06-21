@@ -17,19 +17,19 @@ class AppointmentService {
         return $this->repository->getAll($offset, $limit);
     }
 
-    public function getOne($id) : Appointment {
+    public function getOne(string $id) : Appointment {
         return $this->repository->getOne($id);
     }
 
-    public function insert($appointment) : Appointment {       
+    public function insert(Appointment $appointment) : Appointment {       
         return $this->repository->insert($appointment);        
     }
 
-    public function update($appointment, $id) : Appointment {       
-        return $this->repository->update($appointment, $id);        
+    public function update(Appointment $appointment) : Appointment {       
+        return $this->repository->update($appointment);        
     }
 
-    public function delete($id) : bool {       
+    public function delete(string $id) : bool {       
         return $this->repository->delete($id);
     }
 }

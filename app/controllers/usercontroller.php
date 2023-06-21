@@ -57,8 +57,54 @@ class UserController extends Controller {
         }
     }
 
-    public function login() {
+    public function update(int $id) {
+        try {
+            $token = $this->checkForJwt();
 
+            if (!$token)
+                $this->respondWithError("Unauthorized!", 401);
+
+            if ($token->data->role != Roles::Employee)
+                $this->respondWithError("Forbidden!", 403);
+
+            $user = $this->createObjectFromPostedJson("Models\\User");
+
+            if ($id != $user->id) 
+                throw new Exception("Invalid id!");
+            
+            $user = $this->service->update($user, $id);
+            $this->respond($user);
+        } catch (Exception $e) {
+            $this->respondWithError("Bad Request!", 400);
+        }
+    }
+
+    public function delete(int $id) {
+        try {
+            $token = $this->checkForJwt();
+
+            if (!$token)
+                $this->respondWithError("Unauthorized!", 401);
+
+            $user = $this->service->getOne($id);
+            
+            // we might need some kind of error checking that returns a 404 if the user is not found in the DB
+            if (!$user)
+                $this->respondWithError("User Not Found!", 404);
+
+            if ($token->data->role != Roles::Employee && $token->data->id != $user->id)
+                $this->respondWithError("Forbidden!", 403);
+
+            if(!$this->service->delete($id))
+                throw new Exception("Couldn't delete the user!");
+            
+            $this->respond(true, 204);
+        } catch (Exception $e) {
+            $this->respondWithError("Bad Request!", 400);
+        }
+    }
+
+    public function login() {
         try {
             // read user data from request body
             $postedUser = $this->createObjectFromPostedJson("Models\\User");
@@ -87,10 +133,11 @@ class UserController extends Controller {
                 
             $user = $this->createObjectFromPostedJson("Models\\User");
 
-            if ((!$token || $token->data->role != Roles::Employee ) && $user->role == Roles::Employee)
+            if (($token && $token->data->role != Roles::Employee ) && $user->role == Roles::Employee)
                 $this->respondWithError("Forbidden!", 403);
             
-            $user = $this->service->register($user);
+            $user = $this->service->create($user);
+            unset($user->password);
             $this->respond($user, 201);
         } catch (Exception $e) {
             $this->respondWithError("Bad Request!", 400);

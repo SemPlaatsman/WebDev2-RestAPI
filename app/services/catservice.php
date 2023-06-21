@@ -24,11 +24,11 @@ class CatService {
         return $this->repository->insert($cat);        
     }
 
-    public function update(Cat $cat, int $id) : Cat {       
-        return $this->repository->update($cat, $id);        
+    public function update(Cat $cat) : Cat {       
+        return $this->repository->update($cat);
     }
 
-    public function delete(int $id) : bool {       
+    public function delete(int $id) : bool {
         return $this->repository->delete($id);
     }
 }

@@ -46,10 +46,10 @@ class AppointmentRepository extends Repository {
     }
 
 
-    function update(Appointment $appointment, string $id) : Appointment {
+    function update(Appointment $appointment) : Appointment {
         $stmt = $this->connection->prepare("UPDATE `appointments` SET `datetime`=:datetime WHERE id=:id");
         $stmt->bindParam(":datetime", $appointment->datetime, PDO::PARAM_STR);
-        $stmt->bindParam(":id", $id, PDO::PARAM_STR);
+        $stmt->bindParam(":id", $appointment->id, PDO::PARAM_STR);
         $stmt->execute();
         return $this->getOne($appointment->id);
     }

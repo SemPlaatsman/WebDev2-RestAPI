@@ -63,7 +63,7 @@ class UserRepository extends Repository {
         return $user;
     }
 
-    function register(User $user) : User {
+    function create(User $user) : User {
         $user->password = $this->hashPassword($user->password);
         $stmt = $this->connection->prepare("INSERT INTO `users`(`id`, `username`, `password`, `role`, `email`) VALUES (NULL, :username, :password, :role, :email)");
         $stmt->bindParam(':username', $user->username, PDO::PARAM_STR);
@@ -72,6 +72,25 @@ class UserRepository extends Repository {
         $stmt->bindParam(':email', $user->email, PDO::PARAM_STR);
         $stmt->execute();
         return $this->getOne($this->connection->lastInsertId());
+    }
+
+    function update(User $user) : User {
+        isset($user->password) ? $this->hashPassword($user->password) : NULL;
+        $stmt = $this->connection->prepare("UPDATE `users` SET `username`=:username " . (isset($user->password) ? "`password`=:password, " : "") . "`role`=:role, `email`=:email WHERE id=:id");
+        $stmt->bindParam(':username', $user->username, PDO::PARAM_STR);
+        isset($user->password) ? $stmt->bindParam(':password', $user->password, PDO::PARAM_STR) : NULL;
+        $stmt->bindParam(':role', $user->role, PDO::PARAM_INT);
+        $stmt->bindParam(':email', $user->email, PDO::PARAM_STR);
+        $stmt->bindParam(":id", $user->id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $this->getOne($user->id);
+    }
+
+    function delete(int $id) : bool {
+        $stmt = $this->connection->prepare("DELETE FROM `users` WHERE id=:id LIMIT 1");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
     }
 
     // hash the password (currently uses bcrypt)

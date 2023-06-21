@@ -25,8 +25,16 @@ class UserService {
         return $this->repository->getOne($id);
     }
 
-    public function register(User $user) : User {
-        return $this->repository->register($user);
+    public function create(User $user) : User {
+        return $this->repository->create($user);
+    }
+
+    public function update(User $user) : User {
+        return $this->repository->update($user);
+    }
+
+    public function delete(int $id) : bool {
+        return $this->repository->delete($id);
     }
 }
 

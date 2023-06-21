@@ -79,7 +79,7 @@ class AppointmentController extends Controller {
             if ($id != $appointment->id)
                 throw new Exception("Invalid id!");
 
-            $appointment = $this->service->update($appointment, $id);
+            $appointment = $this->service->update($appointment);
             $this->respond($appointment);
         } catch (Exception $e) {
             $this->respondWithError("Bad Request!", 400);

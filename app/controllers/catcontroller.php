@@ -76,7 +76,7 @@ class CatController extends Controller {
             if ($id != $cat->id) 
                 throw new Exception("Invalid id!");
             
-            $cat = $this->service->update($cat, $id);
+            $cat = $this->service->update($cat);
             $this->respond($cat);
         } catch (Exception $e) {
             $this->respondWithError("Bad Request!", 400);
