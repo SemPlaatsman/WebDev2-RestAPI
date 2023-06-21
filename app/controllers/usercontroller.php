@@ -5,7 +5,9 @@ namespace Controllers;
 use Exception;
 use Models\Roles;
 use Services\UserService;
+use Validators\UserValidator;
 use \Firebase\JWT\JWT;
+use Models\User;
 
 class UserController extends Controller {
     private $service;
@@ -68,6 +70,9 @@ class UserController extends Controller {
                 $this->respondWithError("Forbidden!", 403);
 
             $user = $this->createObjectFromPostedJson("Models\\User");
+
+            if(UserValidator::isValid($user))
+                $this->respondWithError("Invalid User provided!", 400);
 
             if ($id != $user->id) 
                 throw new Exception("Invalid id!");
@@ -132,6 +137,9 @@ class UserController extends Controller {
             $token = $this->checkForJwt();
                 
             $user = $this->createObjectFromPostedJson("Models\\User");
+
+            if(UserValidator::isValid($user))
+                $this->respondWithError("Invalid User provided!", 400);
 
             if (($token && $token->data->role != Roles::Employee ) && $user->role == Roles::Employee)
                 $this->respondWithError("Forbidden!", 403);

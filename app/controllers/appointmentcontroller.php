@@ -6,6 +6,7 @@ use Exception;
 use Models\Appointment;
 use Models\Roles;
 use Services\AppointmentService;
+use Validators\AppointmentValidator;
 
 class AppointmentController extends Controller {
     private $service;
@@ -61,6 +62,10 @@ class AppointmentController extends Controller {
     public function create() {
         try {
             $appointment = $this->createObjectFromPostedJson("Models\\Appointment");
+
+            if(AppointmentValidator::isValid($appointment))
+                $this->respondWithError("Invalid Appointment provided!", 400);
+
             $appointment = $this->service->insert($appointment);
             $this->respond($appointment, 201);
         } catch (Exception $e) {
@@ -75,6 +80,9 @@ class AppointmentController extends Controller {
             
 
             $appointment = $this->createObjectFromPostedJson("Models\\Appointment");
+
+            if(AppointmentValidator::isValid($appointment))
+                $this->respondWithError("Invalid Appointment provided!", 400);
 
             if ($id != $appointment->id)
                 throw new Exception("Invalid id!");

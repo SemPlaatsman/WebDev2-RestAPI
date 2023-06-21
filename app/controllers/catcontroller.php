@@ -8,7 +8,7 @@ use Models\CatStatus;
 
 use Exception;
 use Services\CatService;
-use stdClass;
+use Validators\CatValidator;
 
 class CatController extends Controller {
     private $service;
@@ -54,6 +54,10 @@ class CatController extends Controller {
                 $this->respondWithError("Unauthorized!", 401);
 
             $cat = $this->createObjectFromPostedJson("Models\\Cat");
+
+            if(CatValidator::isValid($cat))
+                $this->respondWithError("Invalid Cat provided!", 400);
+
             $cat = $this->service->insert($cat);
             $this->respond($cat, 201);
         } catch (Exception $e) {
@@ -72,6 +76,9 @@ class CatController extends Controller {
                 $this->respondWithError("Forbidden!", 403);
 
             $cat = $this->createObjectFromPostedJson("Models\\Cat");
+
+            if(CatValidator::isValid($cat))
+                $this->respondWithError("Invalid Cat provided!", 400);
 
             if ($id != $cat->id) 
                 throw new Exception("Invalid id!");

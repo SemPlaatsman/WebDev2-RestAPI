@@ -19,6 +19,3 @@ POST	/users/login		NoAuth
 POST 	/users/register		NoAuth      If Customer: New User role cannot be Employee
 PUT	    /users/:id		    Employee    If password not set: don't update
 DELETE	/users/:id		    Auth		If Customer: Owner ID must match and destroy JWT
-
-TODO:
--ALL    /**                 **          DTO Validation 
