@@ -5,6 +5,7 @@ namespace Controllers;
 use Exception;
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
+use stdClass;
 
 class Controller
 {
@@ -46,6 +47,7 @@ class Controller
 
         http_response_code($httpcode);
         echo json_encode($data);
+        // var_dump(json_last_error_msg());
         die();
     }
 

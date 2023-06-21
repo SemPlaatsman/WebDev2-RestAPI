@@ -63,7 +63,7 @@ class AppointmentController extends Controller {
         try {
             $appointment = $this->createObjectFromPostedJson("Models\\Appointment");
 
-            if(AppointmentValidator::isValid($appointment))
+            if(!AppointmentValidator::isValid($appointment))
                 $this->respondWithError("Invalid Appointment provided!", 400);
 
             $appointment = $this->service->insert($appointment);
@@ -81,7 +81,7 @@ class AppointmentController extends Controller {
 
             $appointment = $this->createObjectFromPostedJson("Models\\Appointment");
 
-            if(AppointmentValidator::isValid($appointment))
+            if(!AppointmentValidator::isValid($appointment))
                 $this->respondWithError("Invalid Appointment provided!", 400);
 
             if ($id != $appointment->id)

@@ -6,7 +6,7 @@ use Models\CatStatus;
 
 class CatValidator {
     public static function isValid(Cat $cat) : bool {
-        if (self::validateId($cat->id)) {
+        if (isset($cat->id) && self::validateId($cat->id)) {
             return false;
         } else if (self::validateUserId($cat->userId)) {
             return false;

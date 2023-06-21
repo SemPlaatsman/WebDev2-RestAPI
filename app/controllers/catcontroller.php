@@ -25,7 +25,6 @@ class CatController extends Controller {
             $limit = (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $_GET["limit"] : NULL;
             
             $cats = $this->service->getAll($status, $offset, $limit);
-            
             $this->respond($cats);
         } catch (Exception $e) {
             $this->respondWithError("Bad Request!", 400);
@@ -55,7 +54,7 @@ class CatController extends Controller {
 
             $cat = $this->createObjectFromPostedJson("Models\\Cat");
 
-            if(CatValidator::isValid($cat))
+            if(!CatValidator::isValid($cat))
                 $this->respondWithError("Invalid Cat provided!", 400);
 
             $cat = $this->service->insert($cat);
@@ -77,7 +76,7 @@ class CatController extends Controller {
 
             $cat = $this->createObjectFromPostedJson("Models\\Cat");
 
-            if(CatValidator::isValid($cat))
+            if(!CatValidator::isValid($cat))
                 $this->respondWithError("Invalid Cat provided!", 400);
 
             if ($id != $cat->id) 

@@ -6,7 +6,7 @@ use Models\Roles;
 
 class UserValidator {
     public static function isValid(User $user) : bool {
-        if (self::validateId($user->id)) {
+        if (isset($user->id) && self::validateId($user->id)) {
             return false;
         } else if (self::validateUsername($user->username)) {
             return false;

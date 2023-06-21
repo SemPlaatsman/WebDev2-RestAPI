@@ -71,7 +71,7 @@ class UserController extends Controller {
 
             $user = $this->createObjectFromPostedJson("Models\\User");
 
-            if(UserValidator::isValid($user))
+            if(!UserValidator::isValid($user))
                 $this->respondWithError("Invalid User provided!", 400);
 
             if ($id != $user->id) 
@@ -138,7 +138,7 @@ class UserController extends Controller {
                 
             $user = $this->createObjectFromPostedJson("Models\\User");
 
-            if(UserValidator::isValid($user))
+            if(!UserValidator::isValid($user))
                 $this->respondWithError("Invalid User provided!", 400);
 
             if (($token && $token->data->role != Roles::Employee ) && $user->role == Roles::Employee)
@@ -186,6 +186,7 @@ class UserController extends Controller {
             array(
                 "message" => "Successful login.",
                 "jwt" => $jwt,
+                "id" => $user->id,
                 "username" => $user->username,
                 "email" => $user->email,
                 "role" => $user->role,
