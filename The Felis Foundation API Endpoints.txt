@@ -1,0 +1,23 @@
+The Felis Foundation API Endpoints
+Types: NoAuth, Auth, Employee
+
+GET 	/appointments		Employee
+GET 	/appointments/:id	Auth		If Customer: Owner ID must match
+POST 	/appointments		Auth
+PUT 	/appointments/:id	Employee
+DELETE 	/appointments/:id	Auth		If Customer: Owner ID must match
+
+GET 	/cats			    NoAuth
+GET 	/cats/:id		    NoAuth
+POST 	/cats			    Auth
+PUT 	/cats/:id		    Employee
+DELETE  /cats/:id		    Auth		If Customer: Owner ID must match
+
+GET 	/users			    Employee
+GET 	/users/:id		    Auth		If Customer: Owner ID must match
+POST	/users/login		NoAuth
+POST 	/users/register		NoAuth      If Customer: New User role cannot be Employee
+
+TODO:
+-PUT	/users/:id		    Employee
+-DELETE	/users/:id		    Auth		If Customer: Owner ID must match and destroy JWT

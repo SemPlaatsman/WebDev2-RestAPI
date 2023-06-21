@@ -3,11 +3,13 @@
 namespace Controllers;
 
 use Exception;
+use Models\Appointment;
+use Models\Roles;
 use Services\AppointmentService;
 
 class AppointmentController extends Controller {
     private $service;
-    private object $token;
+    private ?object $token;
 
     // initialize services
     function __construct() {
@@ -15,18 +17,19 @@ class AppointmentController extends Controller {
 
         $token = $this->checkForJwt();
         if (!$token)
-            die();
+            $this->respondWithError("Unauthorized!", 401);
 
         $this->token = $token;
     }
 
     public function getAll() {
         try {
-            $offset = NULL;
-            $limit = NULL;
+            if ($this->token->data->role != Roles::Employee)
+                $this->respondWithError("Forbidden!", 403);
+            
 
-            (isset($_GET["offset"]) && is_numeric($_GET["offset"])) ? $offset = $_GET["offset"] : NULL;
-            (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $limit = $_GET["limit"] : NULL;
+            $offset = (isset($_GET["offset"]) && is_numeric($_GET["offset"])) ? $_GET["offset"] : NULL;
+            $limit = (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $_GET["limit"] : NULL;
             
             $appointments = $this->service->getAll($offset, $limit);
             
@@ -40,11 +43,14 @@ class AppointmentController extends Controller {
         try {
             $appointment = $this->service->getOne($id);
             
+            if ($this->token->data->role != Roles::Employee && $this->token->data->id != $appointment->userId)
+                $this->respondWithError("Forbidden!", 403);
+            
+
             // we might need some kind of error checking that returns a 404 if the appointment is not found in the DB
-            if (!$appointment) {
-                $this->respondWithError("Appointment not found", 404);
-                return;
-            }
+            if (!$appointment)
+                $this->respondWithError("Appointment Not Found!", 404);
+                
             
             $this->respond($appointment);
         } catch (Exception $e) {
@@ -64,7 +70,15 @@ class AppointmentController extends Controller {
 
     public function update(string $id) {
         try {
+            if ($this->token->data->role != Roles::Employee)
+                $this->respondWithError("Forbidden!", 403);
+            
+
             $appointment = $this->createObjectFromPostedJson("Models\\Appointment");
+
+            if ($id != $appointment->id)
+                throw new Exception("Invalid id!");
+
             $appointment = $this->service->update($appointment, $id);
             $this->respond($appointment);
         } catch (Exception $e) {
@@ -74,9 +88,20 @@ class AppointmentController extends Controller {
 
     public function delete(string $id) {
         try {
-            if(!$this->service->delete($id)) {
+            $appointment = $this->service->getOne($id);
+            
+            if ($this->token->data->role != Roles::Employee && $this->token->data->id != $appointment->userId)
+                $this->respondWithError("Forbidden!", 403);
+            
+
+            // we might need some kind of error checking that returns a 404 if the appointment is not found in the DB
+            if (!$appointment)
+                $this->respondWithError("Appointment Not Found!", 404);
+            
+
+            if(!$this->service->delete($id))
                 throw new Exception("Couldn't delete the appointment!");
-            }
+            
 
             $this->respond(true, 204);
         } catch (Exception $e) {

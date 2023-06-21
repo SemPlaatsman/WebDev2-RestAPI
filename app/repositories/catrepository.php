@@ -10,7 +10,7 @@ use Repositories\Repository;
 
 class CatRepository extends Repository {
     function getAll(int $status = NULL, int $offset = NULL, int $limit = NULL) : array {
-        $query = "SELECT `id`, `breeds`, `description`, `status` FROM `cats`" . (isset($status) ? " WHERE `status`=:status" : "") . 
+        $query = "SELECT `id`, `user_id`, `image_format`, `breeds`, `description`, `status` FROM `cats`" . (isset($status) ? " WHERE `status`=:status" : "") . 
         (isset($limit) ? " LIMIT :limit" : " LIMIT 12") . (isset($offset) ? " OFFSET :offset" : " OFFSET 0");
         $stmt = $this->connection->prepare($query);
         isset($status) ? $stmt->bindParam(':status', $status, PDO::PARAM_INT) : NULL;
@@ -27,7 +27,7 @@ class CatRepository extends Repository {
     }
 
     function getOne(int $id) : Cat {
-        $stmt = $this->connection->prepare("SELECT `id`, `breeds`, `description`, `status` FROM `cats` WHERE id=:id LIMIT 1");
+        $stmt = $this->connection->prepare("SELECT `id`, `user_id`, `image_format`, `breeds`, `description`, `status` FROM `cats` WHERE id=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -39,7 +39,9 @@ class CatRepository extends Repository {
     }
 
     function insert(Cat $cat) : Cat {
-        $stmt = $this->connection->prepare("INSERT INTO `cats`(`breeds`, `description`, `status`) VALUES (:breeds, :description, :status)");
+        $stmt = $this->connection->prepare("INSERT INTO `cats`(`user_id`, `image_format`, `breeds`, `description`, `status`) VALUES (:user_id, :image_format, :breeds, :description, :status)");
+        $stmt->bindParam(":user_id", $cat->userId, PDO::PARAM_INT);
+        $stmt->bindParam(":image_format", $cat->imageFormat, PDO::PARAM_STR);
         $stmt->bindParam(":breeds", implode(',', $cat->breeds), PDO::PARAM_STR);
         $stmt->bindParam(":description", $cat->description, PDO::PARAM_STR);
         $stmt->bindParam(":status", $cat->status, PDO::PARAM_INT);
@@ -48,10 +50,9 @@ class CatRepository extends Repository {
     }
 
     function update(Cat $cat, int $id) : Cat {
-        if ($id != $cat->id) {
-            throw new PDOException("Invalid id!");
-        }
-        $stmt = $this->connection->prepare("UPDATE `cats` SET `breeds`=:breeds,`description`=:description,`status`=:status WHERE id=:id");
+        $stmt = $this->connection->prepare("UPDATE `cats` SET `user_id`=:user_id `image_format`=:image_format, `breeds`=:breeds,`description`=:description,`status`=:status WHERE id=:id");
+        $stmt->bindParam(":user_id", $cat->userId, PDO::PARAM_INT);
+        $stmt->bindParam(":image_format", $cat->imageFormat, PDO::PARAM_STR);
         $stmt->bindParam(":breeds", implode(',', $cat->breeds), PDO::PARAM_STR);
         $stmt->bindParam(":description", $cat->description, PDO::PARAM_STR);
         $stmt->bindParam(":status", $cat->status, PDO::PARAM_INT);
@@ -68,6 +69,6 @@ class CatRepository extends Repository {
     }
 
     private function rowToCat($row) : Cat {
-        return new Cat($row['id'] ?? NULL, isset($row['breeds']) ? explode(',', $row['breeds']) : NULL, $row['description'] ?? NULL, $row['status'] ?? NULL);
+        return new Cat($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['image_format'] ?? NULL, isset($row['breeds']) ? explode(',', $row['breeds']) : NULL, $row['description'] ?? NULL, $row['status'] ?? NULL);
     }
 }

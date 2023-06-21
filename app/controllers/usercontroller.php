@@ -15,6 +15,48 @@ class UserController extends Controller {
         $this->service = new UserService();
     }
 
+    public function getAll() {
+        try {
+            $token = $this->checkForJwt();
+
+            if (!$token)
+                $this->respondWithError("Unauthorized!", 401);
+
+            if ($token->data->role != Roles::Employee)
+                $this->respondWithError("Forbidden!", 403);
+
+            $offset = (isset($_GET["offset"]) && is_numeric($_GET["offset"])) ? $_GET["offset"] : NULL;
+            $limit = (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $_GET["limit"] : NULL;
+
+            $users = $this->service->getAll($offset, $limit);
+            
+            $this->respond($users);
+        } catch(Exception $e) {
+            $this->respondWithError("Bad Request!", 400);
+        }
+    }
+
+    public function getOne(int $id) {
+        try {
+            $token = $this->checkForJwt();
+
+            if (!$token)
+                $this->respondWithError("Unauthorized!", 401);
+
+            $user = $this->service->getOne($id);
+
+            if ($token->data->role != Roles::Employee && $user->id != $token->data->id)
+                $this->respondWithError("Forbidden!", 403);
+            
+            // we might need some kind of error checking that returns a 404 if the user is not found in the DB
+            if (!$user)
+                $this->respondWithError("User Not Found!", 404);
+            $this->respond($user);
+        } catch (Exception $e) {
+            $this->respondWithError("Bad Request!", 400);
+        }
+    }
+
     public function login() {
 
         try {
@@ -39,49 +81,15 @@ class UserController extends Controller {
         }
     }
 
-    public function getAll() {
-        try {
-            $offset = NULL;
-            $limit = NULL;
-
-            (isset($_GET["offset"]) && is_numeric($_GET["offset"])) ? $offset = $_GET["offset"] : NULL;
-            (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $limit = $_GET["limit"] : NULL;
-            
-            $users = $this->service->getAll($offset, $limit);
-            
-            $this->respond($users);
-        } catch(Exception $e) {
-            $this->respondWithError("Bad Request!", 400);
-        }
-    }
-
-    public function getOne(int $id) {
-        try {
-            $user = $this->service->getOne($id);
-            
-            // we might need some kind of error checking that returns a 404 if the user is not found in the DB
-            if (!$user) {
-                $this->respondWithError("User not found", 404);
-                return;
-            }
-            
-            $this->respond($user);
-        } catch (Exception $e) {
-            $this->respondWithError("Bad Request!", 400);
-        }
-    }
-
     public function register() {
         try {
             $token = $this->checkForJwt();
                 
             $user = $this->createObjectFromPostedJson("Models\\User");
 
-            if (!$token && $user->role == Roles::Employee) {
-                $this->respondWithError("Invalid credentials provided!", 403);
-                return;
-            }
-
+            if ((!$token || $token->data->role != Roles::Employee ) && $user->role == Roles::Employee)
+                $this->respondWithError("Forbidden!", 403);
+            
             $user = $this->service->register($user);
             $this->respond($user, 201);
         } catch (Exception $e) {

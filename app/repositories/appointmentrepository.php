@@ -10,7 +10,7 @@ use Repositories\Repository;
 
 class AppointmentRepository extends Repository {
     function getAll(int $offset = NULL, int $limit = NULL) : array {
-        $query = "SELECT id, userId, datetime FROM appointments" . " " . (isset($limit) ? "LIMIT :limit" : "LIMIT 12") . " " . (isset($offset) ? "OFFSET :offset" : "OFFSET 0");
+        $query = "SELECT id, user_id, datetime FROM appointments" . " " . (isset($limit) ? "LIMIT :limit" : "LIMIT 12") . " " . (isset($offset) ? "OFFSET :offset" : "OFFSET 0");
         $stmt = $this->connection->prepare($query);
         isset($limit) ? $stmt->bindParam(':limit', $limit, PDO::PARAM_INT) : NULL;
         isset($offset) ? $stmt->bindParam(':offset', $offset, PDO::PARAM_INT) : NULL;
@@ -25,7 +25,7 @@ class AppointmentRepository extends Repository {
     }
 
     function getOne(string $id) : Appointment {
-        $stmt = $this->connection->prepare("SELECT `id`, `userId`, `datetime` FROM `appointments` WHERE id=:id LIMIT 1");
+        $stmt = $this->connection->prepare("SELECT `id`, `user_id`, `datetime` FROM `appointments` WHERE id=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -37,9 +37,9 @@ class AppointmentRepository extends Repository {
     }
 
     function insert(Appointment $appointment) : Appointment {
-        $stmt = $this->connection->prepare("INSERT INTO `appointments`(`id`, `userId`, `datetime`) VALUES (:id, :userId, :datetime)");
+        $stmt = $this->connection->prepare("INSERT INTO `appointments`(`id`, `user_id`, `datetime`) VALUES (:id, :user_id, :datetime)");
         $stmt->bindParam(":id", $appointment->id, PDO::PARAM_STR);
-        $stmt->bindParam(":userId", $appointment->userId, PDO::PARAM_STR);
+        $stmt->bindParam(":user_id", $appointment->userId, PDO::PARAM_STR);
         $stmt->bindParam(":datetime", $appointment->datetime, PDO::PARAM_STR);
         $stmt->execute();
         return $this->getOne($appointment->id);
@@ -47,9 +47,6 @@ class AppointmentRepository extends Repository {
 
 
     function update(Appointment $appointment, string $id) : Appointment {
-        if ($id != $appointment->id) {
-            throw new PDOException("Invalid id!");
-        }
         $stmt = $this->connection->prepare("UPDATE `appointments` SET `datetime`=:datetime WHERE id=:id");
         $stmt->bindParam(":datetime", $appointment->datetime, PDO::PARAM_STR);
         $stmt->bindParam(":id", $id, PDO::PARAM_STR);
@@ -65,6 +62,6 @@ class AppointmentRepository extends Repository {
     }
 
     private function rowToAppointment($row) : Appointment {
-        return new Appointment($row['id'] ?? NULL, $row['userId'] ?? NULL, $row['datetime'] ?? NULL);
+        return new Appointment($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['datetime'] ?? NULL);
     }
 }
