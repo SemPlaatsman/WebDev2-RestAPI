@@ -26,7 +26,7 @@ class CatRepository extends Repository {
         return $cats;
     }
 
-    function getOne(int $id) : Cat {
+    function getOne(int $id) : ?Cat {
         $stmt = $this->connection->prepare("SELECT C.`id`, C.`user_id`, U.`email`, C.`image`, C.`image_format`, C.`breeds`, C.`description`, C.`status` FROM `cats` as C JOIN `users` as U ON U.`id` = C.`user_id` WHERE C.`id`=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -38,7 +38,7 @@ class CatRepository extends Repository {
         return $cat;
     }
 
-    function insert(Cat $cat) : Cat {
+    function insert(Cat $cat) : ?Cat {
         $imageBlob = base64_decode($cat->encodedImage);
         $implodedBreeds = implode(',', $cat->breeds);
         $stmt = $this->connection->prepare("INSERT INTO `cats`(`user_id`, `image`, `image_format`, `breeds`, `description`, `status`) VALUES (:user_id, :image, :image_format, :breeds, :description, :status)");
@@ -52,7 +52,7 @@ class CatRepository extends Repository {
         return $this->getOne($this->connection->lastInsertId());
     }
 
-    function update(Cat $cat) : Cat {
+    function update(Cat $cat) : ?Cat {
         $stmt = $this->connection->prepare("UPDATE `cats` SET `user_id`=:user_id, `image`=:image, `image_format`=:image_format, `breeds`=:breeds, `description`=:description, `status`=:status WHERE id=:id");
         $stmt->bindParam(":user_id", $cat->userId, PDO::PARAM_INT);
         $stmt->bindParam(":image", base64_encode($cat->encodedImage), PDO::PARAM_LOB);
@@ -72,7 +72,10 @@ class CatRepository extends Repository {
         return $stmt->rowCount() > 0;
     }
 
-    private function rowToCat($row) : Cat {
-        return new Cat($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['email'] ?? NULL, base64_encode($row['image'] ?? ""), $row['image_format'] ?? NULL, isset($row['breeds']) ? explode(',', $row['breeds']) : NULL, $row['description'] ?? NULL, $row['status'] ?? NULL);
+    private function rowToCat($row) : ?Cat {
+        if (!$row) {
+            return null;
+        }
+        return new Cat($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['email'] ?? NULL, isset($row['image']) ? base64_encode($row['image']) : NULL, $row['image_format'] ?? NULL, isset($row['breeds']) ? explode(',', $row['breeds']) : NULL, $row['description'] ?? NULL, $row['status'] ?? NULL);
     }
 }

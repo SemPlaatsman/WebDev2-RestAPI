@@ -16,15 +16,15 @@ class CatService {
         return $this->repository->getAll($status, $offset, $limit);
     }
 
-    public function getOne(int $id) : Cat {
+    public function getOne(int $id) : ?Cat {
         return $this->repository->getOne($id);
     }
 
-    public function insert(Cat $cat) : Cat {       
+    public function insert(Cat $cat) : ?Cat {       
         return $this->repository->insert($cat);        
     }
 
-    public function update(Cat $cat) : Cat {       
+    public function update(Cat $cat) : ?Cat {       
         return $this->repository->update($cat);
     }
 
