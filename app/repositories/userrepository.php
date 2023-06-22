@@ -51,7 +51,7 @@ class UserRepository extends Repository {
         return $users;
     }
 
-    function getOne(int $id) : User {
+    function getOne(int $id) : ?User {
         $stmt = $this->connection->prepare("SELECT `id`, `username`, `password`, `role`, `email` FROM `users` WHERE id=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_STR);
         $stmt->execute();
@@ -63,7 +63,7 @@ class UserRepository extends Repository {
         return $user;
     }
 
-    function create(User $user) : User {
+    function create(User $user) : ?User {
         $user->password = $this->hashPassword($user->password);
         $stmt = $this->connection->prepare("INSERT INTO `users`(`id`, `username`, `password`, `role`, `email`) VALUES (NULL, :username, :password, :role, :email)");
         $stmt->bindParam(':username', $user->username, PDO::PARAM_STR);
@@ -74,7 +74,7 @@ class UserRepository extends Repository {
         return $this->getOne($this->connection->lastInsertId());
     }
 
-    function update(User $user) : User {
+    function update(User $user) : ?User {
         isset($user->password) ? $this->hashPassword($user->password) : NULL;
         $stmt = $this->connection->prepare("UPDATE `users` SET `username`=:username " . (isset($user->password) ? "`password`=:password, " : "") . "`role`=:role, `email`=:email WHERE id=:id");
         $stmt->bindParam(':username', $user->username, PDO::PARAM_STR);
@@ -103,7 +103,7 @@ class UserRepository extends Repository {
         return password_verify($input, $hash);
     }
 
-    private function rowToUser($row) : User {
+    private function rowToUser($row) : ?User {
         return new User($row['id'] ?? NULL, $row['username'] ?? NULL, $row['password'] ?? NULL, $row['role'] ?? NULL, $row['email'] ?? NULL);
     }
 }

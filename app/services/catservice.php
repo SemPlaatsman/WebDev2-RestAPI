@@ -6,30 +6,30 @@ use Models\Cat;
 use Repositories\CatRepository;
 
 class CatService {
-    private $repository;
+    private $catRepository;
 
     function __construct() {
-        $this->repository = new CatRepository();
+        $this->catRepository = new CatRepository();
     }
 
     public function getAll(int $status = NULL, $offset = NULL, $limit = NULL) : array {
-        return $this->repository->getAll($status, $offset, $limit);
+        return $this->catRepository->getAll($status, $offset, $limit);
     }
 
     public function getOne(int $id) : ?Cat {
-        return $this->repository->getOne($id);
+        return $this->catRepository->getOne($id);
     }
 
     public function insert(Cat $cat) : ?Cat {       
-        return $this->repository->insert($cat);        
+        return $this->catRepository->insert($cat);        
     }
 
     public function update(Cat $cat) : ?Cat {       
-        return $this->repository->update($cat);
+        return $this->catRepository->update($cat);
     }
 
     public function delete(int $id) : bool {
-        return $this->repository->delete($id);
+        return $this->catRepository->delete($id);
     }
 }
 

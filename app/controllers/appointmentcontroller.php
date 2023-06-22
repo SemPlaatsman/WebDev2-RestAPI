@@ -78,7 +78,6 @@ class AppointmentController extends Controller {
             if ($this->token->data->role != Roles::Employee)
                 $this->respondWithError("Forbidden!", 403);
             
-
             $appointment = $this->createObjectFromPostedJson("Models\\Appointment");
 
             if(!AppointmentValidator::isValid($appointment))

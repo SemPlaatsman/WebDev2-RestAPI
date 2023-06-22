@@ -26,6 +26,19 @@ class CatRepository extends Repository {
         return $cats;
     }
 
+    function getAllOfUser(int $userId) : array {
+        $stmt = $this->connection->prepare("SELECT `id`, `user_id`, `image`, `image_format`, `breeds`, `description`, `status` FROM `cats` WHERE `user_id`=:user_id");
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $cats = array();
+        while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+            $cats[] = $this->rowToCat($row);
+        }
+
+        return $cats;
+    }
+
     function getOne(int $id) : ?Cat {
         $stmt = $this->connection->prepare("SELECT C.`id`, C.`user_id`, U.`email`, C.`image`, C.`image_format`, C.`breeds`, C.`description`, C.`status` FROM `cats` as C JOIN `users` as U ON U.`id` = C.`user_id` WHERE C.`id`=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);

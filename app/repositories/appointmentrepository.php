@@ -24,7 +24,20 @@ class AppointmentRepository extends Repository {
         return $appointments;
     }
 
-    function getOne(string $id) : Appointment {
+    function getAllOfUser(int $userId) : array {
+        $stmt = $this->connection->prepare("SELECT `id`, `user_id`, `datetime` FROM `appointments` WHERE `user_id`=:user_id");
+        $stmt->bindParam(":user_id", $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $appointments = array();
+        while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {               
+            $appointments[] = $this->rowToAppointment($row);
+        }
+        
+        return $appointments;
+    }
+
+    function getOne(string $id) : ?Appointment {
         $stmt = $this->connection->prepare("SELECT `id`, `user_id`, `datetime` FROM `appointments` WHERE id=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_STR);
         $stmt->execute();
@@ -36,7 +49,7 @@ class AppointmentRepository extends Repository {
         return $appointment;
     }
 
-    function insert(Appointment $appointment) : Appointment {
+    function insert(Appointment $appointment) : ?Appointment {
         $stmt = $this->connection->prepare("INSERT INTO `appointments`(`id`, `user_id`, `datetime`) VALUES (:id, :user_id, :datetime)");
         $stmt->bindParam(":id", $appointment->id, PDO::PARAM_STR);
         $stmt->bindParam(":user_id", $appointment->userId, PDO::PARAM_STR);
@@ -46,7 +59,7 @@ class AppointmentRepository extends Repository {
     }
 
 
-    function update(Appointment $appointment) : Appointment {
+    function update(Appointment $appointment) : ?Appointment {
         $stmt = $this->connection->prepare("UPDATE `appointments` SET `datetime`=:datetime WHERE id=:id");
         $stmt->bindParam(":datetime", $appointment->datetime, PDO::PARAM_STR);
         $stmt->bindParam(":id", $appointment->id, PDO::PARAM_STR);
@@ -61,7 +74,7 @@ class AppointmentRepository extends Repository {
         return $stmt->rowCount() > 0;
     }
 
-    private function rowToAppointment($row) : Appointment {
+    private function rowToAppointment($row) : ?Appointment {
         return new Appointment($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['datetime'] ?? NULL);
     }
 }

@@ -38,6 +38,40 @@ class UserController extends Controller {
         }
     }
 
+    public function getAppointments(int $id) {
+        try {
+            $token = $this->checkForJwt();
+
+            if (!$token)
+                $this->respondWithError("Unauthorized!", 401);
+
+            if ($token->data->role != Roles::Employee && $id != $token->data->id)
+                $this->respondWithError("Forbidden!", 403);
+            
+            $appointments = $this->service->getAppointments($id);
+            $this->respond($appointments);
+        } catch (Exception $e) {
+            $this->respondWithError("Bad Request!", 400);
+        }
+    }
+
+    public function getCats(int $id) {
+        try {
+            $token = $this->checkForJwt();
+
+            if (!$token)
+                $this->respondWithError("Unauthorized!", 401);
+
+            if ($token->data->role != Roles::Employee && $id != $token->data->id)
+                $this->respondWithError("Forbidden!", 403);
+
+            $cats = $this->service->getCats($id);
+            $this->respond($cats);
+        } catch (Exception $e) {
+            $this->respondWithError("Bad Request!", 400);
+        }
+    }
+
     public function getOne(int $id) {
         try {
             $token = $this->checkForJwt();
@@ -45,10 +79,10 @@ class UserController extends Controller {
             if (!$token)
                 $this->respondWithError("Unauthorized!", 401);
 
-            $user = $this->service->getOne($id);
-
-            if ($token->data->role != Roles::Employee && $user->id != $token->data->id)
+            if ($token->data->role != Roles::Employee && $id != $token->data->id)
                 $this->respondWithError("Forbidden!", 403);
+
+            $user = $this->service->getOne($id);
             
             // we might need some kind of error checking that returns a 404 if the user is not found in the DB
             if (!$user)

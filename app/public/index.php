@@ -29,6 +29,8 @@ $router->delete('/cats/(\d+)', 'CatController@delete');
 
 // routes for the users endpoint
 $router->get('/users', 'UserController@getAll');
+$router->get('/users/(\d+)/appointments', 'UserController@getAppointments');
+$router->get('/users/(\d+)/cats', 'UserController@getCats');
 $router->get('/users/(\d+)', 'UserController@getOne');
 $router->post('/users/login', 'UserController@login');
 $router->post('/users/register', 'UserController@register');
