@@ -48,6 +48,12 @@ class UserController extends Controller {
             if ($token->data->role != Roles::Employee && $id != $token->data->id)
                 $this->respondWithError("Forbidden!", 403);
             
+            $user = $this->service->getOne($id);
+            
+            // we might need some kind of error checking that returns a 404 if the user is not found in the DB
+            if (!$user)
+                $this->respondWithError("User Not Found!", 404);
+            
             $appointments = $this->service->getAppointments($id);
             $this->respond($appointments);
         } catch (Exception $e) {
@@ -64,6 +70,12 @@ class UserController extends Controller {
 
             if ($token->data->role != Roles::Employee && $id != $token->data->id)
                 $this->respondWithError("Forbidden!", 403);
+
+            $user = $this->service->getOne($id);
+            
+            // we might need some kind of error checking that returns a 404 if the user is not found in the DB
+            if (!$user)
+                $this->respondWithError("User Not Found!", 404);
 
             $cats = $this->service->getCats($id);
             $this->respond($cats);

@@ -75,6 +75,9 @@ class AppointmentRepository extends Repository {
     }
 
     private function rowToAppointment($row) : ?Appointment {
+        if (!$row) {
+            return null;
+        }
         return new Appointment($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['datetime'] ?? NULL);
     }
 }

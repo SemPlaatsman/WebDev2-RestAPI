@@ -104,6 +104,9 @@ class UserRepository extends Repository {
     }
 
     private function rowToUser($row) : ?User {
+        if (!$row) {
+            return null;
+        }
         return new User($row['id'] ?? NULL, $row['username'] ?? NULL, $row['password'] ?? NULL, $row['role'] ?? NULL, $row['email'] ?? NULL);
     }
 }
