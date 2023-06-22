@@ -10,7 +10,7 @@ use Repositories\Repository;
 
 class CatRepository extends Repository {
     function getAll(int $status = NULL, int $offset = NULL, int $limit = NULL) : array {
-        $query = "SELECT `id`, `user_id`, `image`, `image_format`, `breeds`, `description`, `status` FROM `cats`" . (isset($status) ? " WHERE `status`=:status" : "") . 
+        $query = "SELECT C.`id`, C.`user_id`, U.`email`, C.`image`, C.`image_format`, C.`breeds`, C.`description`, C.`status` FROM `cats` as C JOIN `users` as U ON U.`id` = C.`user_id`" . (isset($status) ? " WHERE C.`status`=:status" : "") . 
         (isset($limit) ? " LIMIT :limit" : " LIMIT 12") . (isset($offset) ? " OFFSET :offset" : " OFFSET 0");
         $stmt = $this->connection->prepare($query);
         isset($status) ? $stmt->bindParam(':status', $status, PDO::PARAM_INT) : NULL;
@@ -27,7 +27,7 @@ class CatRepository extends Repository {
     }
 
     function getOne(int $id) : Cat {
-        $stmt = $this->connection->prepare("SELECT `id`, `user_id`, `image`, `image_format`, `breeds`, `description`, `status` FROM `cats` WHERE id=:id LIMIT 1");
+        $stmt = $this->connection->prepare("SELECT C.`id`, C.`user_id`, U.`email`, C.`image`, C.`image_format`, C.`breeds`, C.`description`, C.`status` FROM `cats` as C JOIN `users` as U ON U.`id` = C.`user_id` WHERE C.`id`=:id LIMIT 1");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -73,6 +73,6 @@ class CatRepository extends Repository {
     }
 
     private function rowToCat($row) : Cat {
-        return new Cat($row['id'] ?? NULL, $row['user_id'] ?? NULL, base64_encode($row['image'] ?? ""), $row['image_format'] ?? NULL, isset($row['breeds']) ? explode(',', $row['breeds']) : NULL, $row['description'] ?? NULL, $row['status'] ?? NULL);
+        return new Cat($row['id'] ?? NULL, $row['user_id'] ?? NULL, $row['email'] ?? NULL, base64_encode($row['image'] ?? ""), $row['image_format'] ?? NULL, isset($row['breeds']) ? explode(',', $row['breeds']) : NULL, $row['description'] ?? NULL, $row['status'] ?? NULL);
     }
 }

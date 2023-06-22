@@ -10,6 +10,8 @@ class CatValidator {
             return false;
         } else if (self::validateUserId($cat->userId)) {
             return false;
+        } else if (isset($cat->userEmail) && self::validateUserEmail($cat->userEmail)) {
+            return false;
         } else if (self::validateImageFormat($cat->imageFormat)) {
             return false;
         } else if (self::validateBreed($cat->breeds)) {
@@ -28,6 +30,10 @@ class CatValidator {
 
     private static function validateUserId(int $userId) : bool {
         return self::validateId($userId);
+    }
+
+    private static function validateUserEmail(string $email) : bool {
+        return !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) >= 255;
     }
 
     private static function validateImageFormat(string $imageFormat) : bool {
