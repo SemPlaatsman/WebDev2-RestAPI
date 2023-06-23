@@ -9,7 +9,7 @@ use PDOException;
 use Repositories\Repository;
 
 class CatRepository extends Repository {
-    function getAll(int $status = NULL, int $offset = NULL, int $limit = NULL) : array {
+    function getAll(int $status = NULL, int $offset = NULL, int $limit = NULL, int $userId = NULL) : array {
         $query = "SELECT C.`id`, C.`user_id`, U.`email`, C.`image`, C.`image_format`, C.`breeds`, C.`description`, C.`status` FROM `cats` as C JOIN `users` as U ON U.`id` = C.`user_id`" . (isset($status) ? " WHERE C.`status`=:status" : "") . 
         (isset($limit) ? " LIMIT :limit" : " LIMIT 12") . (isset($offset) ? " OFFSET :offset" : " OFFSET 0");
         $stmt = $this->connection->prepare($query);

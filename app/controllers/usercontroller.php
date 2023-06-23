@@ -53,8 +53,11 @@ class UserController extends Controller {
             // we might need some kind of error checking that returns a 404 if the user is not found in the DB
             if (!$user)
                 $this->respondWithError("User Not Found!", 404);
+
+            $offset = (isset($_GET["offset"]) && is_numeric($_GET["offset"])) ? $_GET["offset"] : NULL;
+            $limit = (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $_GET["limit"] : NULL;
             
-            $appointments = $this->service->getAppointments($id);
+            $appointments = $this->service->getAppointments($offset, $limit, $id);
             $this->respond($appointments);
         } catch (Exception $e) {
             $this->respondWithError("Bad Request!", 400);
@@ -77,7 +80,11 @@ class UserController extends Controller {
             if (!$user)
                 $this->respondWithError("User Not Found!", 404);
 
-            $cats = $this->service->getCats($id);
+            $status = (isset($_GET["status"]) && is_numeric($_GET["status"])) ? $_GET["status"] : NULL;
+            $offset = (isset($_GET["offset"]) && is_numeric($_GET["offset"])) ? $_GET["offset"] : NULL;
+            $limit = (isset($_GET["limit"]) && is_numeric($_GET["limit"])) ? $_GET["limit"] : NULL;
+
+            $cats = $this->service->getCats($status, $offset, $limit, $id);
             $this->respond($cats);
         } catch (Exception $e) {
             $this->respondWithError("Bad Request!", 400);
@@ -187,7 +194,7 @@ class UserController extends Controller {
             if(!UserValidator::isValid($user))
                 $this->respondWithError("Invalid User provided!", 400);
 
-            if (($token && $token->data->role != Roles::Employee ) && $user->role == Roles::Employee)
+            if (($token && $token->data->role != Roles::Employee ) || $user->role == Roles::Employee)
                 $this->respondWithError("Forbidden!", 403);
             
             $user = $this->service->create($user);
@@ -206,8 +213,7 @@ class UserController extends Controller {
 
         $issuedAt = time(); // issued at
         $notbefore = $issuedAt; //not valid before 
-        // TODO: CHANGE EXPIRE TIME TO 600 SECONDS!!!
-        $expire = $issuedAt + 7200; // expiration time is set at +600 seconds (10 minutes)
+        $expire = $issuedAt + 600; // expiration time is set at +600 seconds (10 minutes)
 
         // JWT expiration times should be kept short (10-30 minutes)
         // A refresh token system should be implemented if we want clients to stay logged in for longer periods

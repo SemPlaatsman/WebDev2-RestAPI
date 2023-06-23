@@ -16,7 +16,7 @@ class UserRepository extends Repository {
             $stmt->bindParam(':username', $username);
             $stmt->execute();
 
-            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Models\User');
+            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Models\\User');
             $user = $stmt->fetch();
 
             if (!$user)
@@ -107,6 +107,6 @@ class UserRepository extends Repository {
         if (!$row) {
             return null;
         }
-        return new User($row['id'] ?? NULL, $row['username'] ?? NULL, $row['password'] ?? NULL, $row['role'] ?? NULL, $row['email'] ?? NULL);
+        return new User($row['id'] ?? NULL, $row['username'] ?? NULL, NULL, $row['role'] ?? NULL, $row['email'] ?? NULL);
     }
 }

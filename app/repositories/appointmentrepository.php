@@ -9,11 +9,12 @@ use PDOException;
 use Repositories\Repository;
 
 class AppointmentRepository extends Repository {
-    function getAll(int $offset = NULL, int $limit = NULL) : array {
-        $query = "SELECT id, user_id, datetime FROM appointments" . " " . (isset($limit) ? "LIMIT :limit" : "LIMIT 12") . " " . (isset($offset) ? "OFFSET :offset" : "OFFSET 0");
+    function getAll(int $offset = NULL, int $limit = NULL, int $userId = NULL) : array {
+        $query = "SELECT id, user_id, datetime FROM appointments" . (isset($userId) ? " WHERE `user_id`=:user_id" : "") . " " . (isset($limit) ? "LIMIT :limit" : "LIMIT 12") . " " . (isset($offset) ? "OFFSET :offset" : "OFFSET 0");
         $stmt = $this->connection->prepare($query);
         isset($limit) ? $stmt->bindParam(':limit', $limit, PDO::PARAM_INT) : NULL;
         isset($offset) ? $stmt->bindParam(':offset', $offset, PDO::PARAM_INT) : NULL;
+        isset($userId) ? $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT) : NULL;
         $stmt->execute();
 
         $appointments = array();

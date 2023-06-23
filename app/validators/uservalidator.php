@@ -14,7 +14,7 @@ class UserValidator {
             return false;
         } else if (self::validateRole($user->role)) {
             return false;
-        } else if (self::validateEmail($user->role)) {
+        } else if (self::validateEmail($user->email)) {
             return false;
         }
         return true;

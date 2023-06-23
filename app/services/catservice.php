@@ -12,7 +12,7 @@ class CatService {
         $this->catRepository = new CatRepository();
     }
 
-    public function getAll(int $status = NULL, $offset = NULL, $limit = NULL) : array {
+    public function getAll(int $status = NULL, int $offset = NULL, int $limit = NULL) : array {
         return $this->catRepository->getAll($status, $offset, $limit);
     }
 

@@ -23,7 +23,7 @@ class UserService {
         return $this->userRepository->checkUsernamePassword($username, $password);
     }
 
-    public function getAll($offset = NULL, $limit = NULL) : array {
+    public function getAll(int $offset = NULL, int $limit = NULL) : array {
         return $this->userRepository->getAll($offset, $limit);
     }
 
@@ -31,12 +31,12 @@ class UserService {
         return $this->userRepository->getOne($id);
     }
 
-    public function getAppointments(int $id) : array {
-        return $this->appointmentRepository->getAllOfUser($id);
+    public function getAppointments(int $offset = NULL, int $limit = NULL, int $id) : array {
+        return $this->appointmentRepository->getAll($offset, $limit, $id);
     }
 
-    public function getCats(int $id) : array {
-        return $this->catRepository->getAllOfUser($id);
+    public function getCats(int $status = NULL, int $offset = NULL, int $limit = NULL, int $id) : array {
+        return $this->catRepository->getAll($status, $offset, $limit, $id);
     }
 
     public function create(User $user) : ?User {

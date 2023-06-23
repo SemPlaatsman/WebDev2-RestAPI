@@ -13,7 +13,7 @@ class AppointmentService {
         $this->appointmentRepository = new AppointmentRepository();
     }
 
-    public function getAll($offset = NULL, $limit = NULL) : array {
+    public function getAll(int $offset = NULL, int $limit = NULL) : array {
         return $this->appointmentRepository->getAll($offset, $limit);
     }
 
