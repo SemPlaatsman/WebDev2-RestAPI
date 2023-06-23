@@ -17,9 +17,9 @@ services:
         image: mariadb:latest
         environment:
             MYSQL_ROOT_PASSWORD: 'secret123'
-            MYSQL_USER: 'developer'
+            MYSQL_USER: 'root'
             MYSQL_PASSWORD: 'secret123'
-            MYSQL_DATABASE: 'developmentdb'
+            MYSQL_DATABASE: 'tffdb'
         volumes:
             - mysqldata:/var/lib/mysql
             - ./sql:/docker-entrypoint-initdb.d

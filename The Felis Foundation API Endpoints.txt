@@ -1,5 +1,5 @@
 The Felis Foundation API Endpoints
-Types: NoAuth, Auth, Employee
+Authentication types: NoAuth, Auth, Employee
 
 GET 	/appointments		    Employee
 GET 	/appointments/:id	    Auth		If Customer: Owner ID must match
