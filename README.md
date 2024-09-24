@@ -1,5 +1,7 @@
 # WebDev2-RestAPI
 
+> 💡 Looking for the frontend? Checkout [WebDev2-EndAssignment](https://github.com/SemPlaatsman/WebDev2-EndAssignment)!
+
 This is the backend of Sem Plaatsman's final assignment for Web Development 2. The database creation script is in the sql folder.
 
 It contains:
